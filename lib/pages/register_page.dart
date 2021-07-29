@@ -13,7 +13,8 @@ class RegisterPage extends StatelessWidget {
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.9,
+            height: MediaQuery.of(context).size.height *
+                0.9, //Se expande por toda la pantalla lo mayormente posibl
             child: Column(
               mainAxisAlignment: MainAxisAlignment
                   .spaceBetween, //Separación en toda la pantalla de los widgets
