@@ -1,14 +1,18 @@
+import 'package:chat/helpers/color_palets.dart';
+import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/auth_service.dart';
 import 'package:chat/widgets/boton_azul.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/labels.dart';
 import 'package:chat/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF2F2F2),
+      backgroundColor: colorPaletNegro(),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -19,7 +23,7 @@ class LoginPage extends StatelessWidget {
                   .spaceBetween, //Separación en toda la pantalla de los widgets
               children: [
                 Logo(
-                  titulo: 'Messenger',
+                  titulo: 'Chatting',
                 ),
                 _Form(),
                 Labels(
@@ -30,7 +34,7 @@ class LoginPage extends StatelessWidget {
                 Text(
                   'Terminos y condiciones de uso\n',
                   style: TextStyle(
-                      fontWeight: FontWeight.w100, color: Colors.black87),
+                      fontWeight: FontWeight.w100, color: Colors.white60),
                 ),
               ],
             ),
@@ -52,6 +56,7 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
     return Container(
       margin: EdgeInsets.only(
         top: 40,
@@ -75,10 +80,26 @@ class __FormState extends State<_Form> {
           // TODO: Crear Boton
           BotonAzul(
               text: 'Ingrese',
-              onPressed: () {
-                print(emailCtrl.text);
-                print(passCtrl.text);
-              })
+              onPressed: authService.autenticando
+                  ? null
+                  : () async {
+                      //Quita el foco y el teclado si es necesario
+                      FocusScope.of(context).unfocus();
+
+                      final loginOK = await authService.login(
+                        emailCtrl.text.trim(),
+                        passCtrl.text.trim(),
+                      );
+
+                      if (loginOK) {
+                        //TODO: Conectar a nuestro SocketServer
+                        Navigator.pushReplacementNamed(context, 'usuarios');
+                      } else {
+                        //Mostrar Alerta
+                        mostrarAlerta(context, 'Login Incorrecto',
+                            'Credenciales Incorrectas ');
+                      }
+                    })
         ],
       ),
     );

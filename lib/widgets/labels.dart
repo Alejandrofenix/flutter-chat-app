@@ -1,3 +1,4 @@
+import 'package:chat/helpers/color_palets.dart';
 import 'package:flutter/material.dart';
 
 class Labels extends StatelessWidget {
@@ -19,7 +20,7 @@ class Labels extends StatelessWidget {
           Text(
             this.textPregunta,
             style: TextStyle(
-                color: Colors.black54,
+                color: Colors.white60,
                 fontSize: 15,
                 fontWeight: FontWeight.w300),
           ),
@@ -30,7 +31,7 @@ class Labels extends StatelessWidget {
             child: Text(
               this.text,
               style: TextStyle(
-                  color: Colors.blue[600],
+                  color: colorPaletMorado(),
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
             ),

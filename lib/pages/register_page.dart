@@ -1,8 +1,11 @@
+import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/auth_service.dart';
 import 'package:chat/widgets/boton_azul.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/labels.dart';
 import 'package:chat/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatelessWidget {
   @override
@@ -54,6 +57,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsets.only(
         top: 40,
@@ -83,10 +88,36 @@ class __FormState extends State<_Form> {
           // TODO: Crear Boton
           BotonAzul(
               text: 'Registrarse',
-              onPressed: () {
-                print(emailCtrl.text);
-                print(passCtrl.text);
-              })
+              onPressed: authService.autenticando
+                  ? null
+                  : () async {
+                      //Quita el foco y el teclado si es necesario
+                      FocusScope.of(context).unfocus();
+                      print(nameCtrl.text);
+                      print(emailCtrl.text);
+                      print(passCtrl.text);
+                      if (nameCtrl.text.isEmpty ||
+                          emailCtrl.text.isEmpty ||
+                          passCtrl.text.isEmpty) {
+                        mostrarAlerta(context, 'Registro Incorrecto',
+                            'Es necesario llenar todos los datos');
+                      } else {
+                        final registerOK = await authService.register(
+                          nameCtrl.text.trim(),
+                          emailCtrl.text.trim(),
+                          passCtrl.text.trim(),
+                        );
+                        print(registerOK);
+                        if (registerOK == true) {
+                          //TODO: Conectar a nuestro SocketServer
+                          Navigator.pushReplacementNamed(context, 'usuarios');
+                        } else {
+                          //Mostrar Alerta
+                          mostrarAlerta(context, 'Registro Incorrecto',
+                              registerOK.toString());
+                        }
+                      }
+                    })
         ],
       ),
     );

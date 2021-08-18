@@ -1,5 +1,8 @@
+import 'package:chat/helpers/color_palets.dart';
 import 'package:chat/models/usuario.dart';
+import 'package:chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class UsuariosPage extends StatefulWidget {
@@ -19,28 +22,37 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authservice = Provider.of<AuthService>(context);
+    final usuario = authservice.usuario;
+
     return Scaffold(
+        backgroundColor: colorPaletNegro(),
         appBar: AppBar(
           title: Center(
             child: Text(
-              'Mi Nombre ',
-              style: TextStyle(color: Colors.black54),
+              usuario.nombre,
+              style: TextStyle(color: Colors.white),
             ),
           ),
           elevation: 1,
-          backgroundColor: Colors.white,
+          backgroundColor: colorPaletGris(),
           leading: IconButton(
             icon: Icon(
               Icons.exit_to_app,
-              color: Colors.black54,
+              color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              //TODO: Desconectarnos del Socket Server
+
+              Navigator.pushReplacementNamed(context, 'login');
+              AuthService.deleteToken();
+            },
           ),
           actions: [
             Container(
               margin: EdgeInsets.only(right: 10),
               child: Icon(
-                Icons.check_circle, color: Colors.blue[400],
+                Icons.wifi, color: Colors.white,
                 //child: Icon(Icons.check_circle, color: Colors.blue[400],
               ),
             ),
@@ -53,9 +65,9 @@ class _UsuariosPageState extends State<UsuariosPage> {
           header: WaterDropHeader(
             complete: Icon(
               Icons.check,
-              color: Colors.blue[400],
+              color: colorPaletMorado(),
             ),
-            waterDropColor: Colors.blue,
+            waterDropColor: colorPaletMorado(),
           ),
           child: _listViewUsuarios(),
         ));
@@ -71,17 +83,20 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   ListTile _usuarioListTitle(Usuario usuario) {
     return ListTile(
-      title: Text(usuario.nombre),
-      subtitle: Text(usuario.email),
+      title: Text(usuario.nombre, style: TextStyle(color: Colors.white60)),
+      subtitle: Text(
+        usuario.email,
+        style: TextStyle(color: Colors.white60),
+      ),
       leading: CircleAvatar(
         child: Text(usuario.nombre.substring(0, 2)),
-        backgroundColor: Colors.blue,
+        backgroundColor: colorPaletMorado(),
       ),
       trailing: Container(
         width: 10,
         height: 10,
         decoration: BoxDecoration(
-            color: usuario.online ? Colors.green[300] : Colors.red,
+            color: usuario.online ? Colors.greenAccent[200] : Colors.grey,
             borderRadius: BorderRadius.circular(100)),
       ),
     );
